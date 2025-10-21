@@ -1,4 +1,4 @@
-package com.joseph.lil.data.entity;
+package com.joseph.lil.data.dao;
 
 import java.util.UUID;
 import java.util.List;

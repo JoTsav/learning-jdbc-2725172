@@ -5,6 +5,7 @@ import com.joseph.lil.data.entity.Service;
 import com.joseph.lil.data.util.DatabaseUtils;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -22,7 +23,12 @@ public class ServiceDao implements Dao<Service, UUID> {
      */
     private static final Logger LOGGER = Logger.getLogger(ServiceDao.class.getName());
 
+    // reads all data
     private static final String GET_ALL = "SELECT service_id, name, price FROM wisdom.services";
+
+    // reads particular data. // ? is placeholder for parameterized query (binding variables)
+    private static final String GET_BY_ID = "SELECT service_id, name, price FROM wisdom.services WHERE service_id = ?";
+
 
     @Override
     public List<Service> getAll() {
@@ -46,6 +52,22 @@ public class ServiceDao implements Dao<Service, UUID> {
 
     @Override
     public Optional<Service> getOne(UUID id) {
+        // obtaining one service by id not implemented yet
+        // used a prepared statement for parameterized query (binding of variables)
+        try (PreparedStatement statement = DatabaseUtils.getConnection().prepareStatement(GET_BY_ID)) {
+            statement.setObject(1, id);
+            ResultSet rs = statement.executeQuery();
+            List<Service> services = this.processResultSet(rs);
+            // always processing for the result set to return a list
+            if (services.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(services.get(0));
+
+            
+        } catch (SQLException e) {
+            DatabaseUtils.handleSqlException("ServiceDao.getOne", e, LOGGER);
+        }
         return Optional.empty();
     }
 

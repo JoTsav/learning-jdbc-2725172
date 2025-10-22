@@ -3,7 +3,9 @@ package com.joseph.lil;
 import com.joseph.lil.data.dao.ServiceDao;
 import com.joseph.lil.data.entity.Service;
 
+import java.lang.foreign.Linker.Option;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Hello world!
@@ -18,5 +20,9 @@ public class App {
         System.out.println("\n**** GET_ALL ****");
         services.forEach(System.out::println);
 
+
+        Optional<Service> serviceOpt = serviceDao.getOne(services.get(0).getServiceID());
+        System.out.println("\n**** GET_ONE ****" + serviceOpt.get());
+        serviceOpt.ifPresent(System.out::println);
     }
 }

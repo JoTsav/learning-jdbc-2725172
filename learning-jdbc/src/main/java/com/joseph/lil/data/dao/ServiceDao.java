@@ -36,6 +36,10 @@ public class ServiceDao implements Dao<Service, UUID> {
     private static final String GET_BY_ID = "SELECT service_id, name, price FROM wisdom.services WHERE service_id = ?";
 
 
+    // creating data
+    private static final String CREATE = "INSERT INTO wisdom.services (service_id, name, price) VALUES (?, ?, ?)";
+
+
     @Override
     public List<Service> getAll() {
 
@@ -53,7 +57,40 @@ public class ServiceDao implements Dao<Service, UUID> {
 
     @Override
     public Service create(Service entity) {
-        return null;
+        UUID serviceId = UUID.randomUUID();
+        Connection connection = DatabaseUtils.getConnection(); // ensure UUID doesn't exist already
+        try {
+            connection.setAutoCommit(false);
+            // rollback segment
+            PreparedStatement statement = connection.prepareStatement(CREATE);
+
+            // for each parameter
+            statement.setObject(1, serviceId);
+            statement.setString(2, entity.getName());
+            statement.setBigDecimal(3, entity.getPrice());
+
+            statement.execute();
+            // still in a rollback segment
+            // Assuming no errors are thrown -> commit
+            connection.commit(); // commits to the database
+
+            // always ensure to close the statement
+            statement.close();
+
+        } catch (SQLException e) {
+            try {
+                connection.rollback(); // if any error is thrown we need to rollback that connection
+
+            } catch (SQLException ex) {
+                DatabaseUtils.handleSqlException("ServiceDao.create.rollback", ex, LOGGER);
+            }
+            DatabaseUtils.handleSqlException("ServiceDao.create", e, LOGGER);
+        }
+        Optional<Service> service = this.getOne(serviceId);
+        if (service.isPresent()) {
+            return null; // TODO : more error handling since problem in the GET or CREATE
+        }
+        return service.get();
     }
 
     @Override

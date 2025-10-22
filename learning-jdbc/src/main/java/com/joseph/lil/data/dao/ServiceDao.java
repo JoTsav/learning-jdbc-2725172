@@ -15,6 +15,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+
+/**
+ * @author jotsh
+ *      Implements DAO interface, defining specific code for database interactivity
+ *      Includes jdbc drivers
+ */
 public class ServiceDao implements Dao<Service, UUID> {
 
     /*

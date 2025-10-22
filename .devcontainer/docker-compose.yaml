@@ -4,17 +4,17 @@ volumes:
 services:
   app:
     container_name: javadev
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
-    environment:     
+    environment:
         POSTGRES_PASSWORD: P@ssw0rd!
         POSTGRES_USER: localdbuser
         POSTGRES_DB: localdb
         POSTGRES_HOSTNAME: postgresdb
 
     volumes:
-      - ../..:/workspaces:cached      
+      - ../..:/workspaces:cached
     command: sleep infinity
     network_mode: service:db
   db:

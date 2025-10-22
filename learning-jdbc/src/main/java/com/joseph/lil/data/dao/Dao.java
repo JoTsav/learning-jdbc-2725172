@@ -4,6 +4,13 @@ import java.util.UUID;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author jotsh
+ * @param <T>
+ * @param <Id>
+ *     Dao interface describes the operations that can be performed with a database
+ */
+
 public interface Dao<T, Id extends UUID> {
   // Defining interface methds for CRUD operations
   List<T> getAll();

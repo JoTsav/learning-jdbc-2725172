@@ -3,6 +3,11 @@ package com.joseph.lil.data.entity;
 import java.util.UUID;
 import java.math.BigDecimal;
 
+/**
+ * @author jotsh
+ *      Enitity classes reflect "structure" of database tables
+ *      Contain fields that represent the data that the program works with
+ */
 public class Service {
 
   private UUID serviceID;

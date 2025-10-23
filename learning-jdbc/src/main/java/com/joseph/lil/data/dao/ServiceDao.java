@@ -39,6 +39,9 @@ public class ServiceDao implements Dao<Service, UUID> {
     // creating data
     private static final String CREATE = "INSERT INTO wisdom.services (service_id, name, price) VALUES (?, ?, ?)";
 
+    // create
+    private static final String UPDATE = "UPDATE wisdom.services SET name = ?, price = ? WHERE service_id = ?";
+
 
     @Override
     public List<Service> getAll() {
@@ -116,7 +119,27 @@ public class ServiceDao implements Dao<Service, UUID> {
 
     @Override
     public Service update(Service entity) {
-        return null;
+        Connection connection = DatabaseUtils.getConnection();
+        try {
+            connection.setAutoCommit(false);
+            PreparedStatement statement = connection.prepareStatement(UPDATE);
+            statement.setString(1, entity.getName());
+            statement.setBigDecimal(2,  entity.getPrice());
+            statement.setObject(3, entity.getServiceID());
+            statement.execute();
+            connection.commit();
+            statement.close();
+        } catch (SQLException e) {
+            try {
+                connection.rollback(); // if any error is thrown we need to rollback that connection
+
+            } catch (SQLException ex) {
+                DatabaseUtils.handleSqlException("ServiceDao.update.rollback", ex, LOGGER);
+            }
+            DatabaseUtils.handleSqlException("ServiceDao.update", e, LOGGER);
+        }
+
+        return this.getOne(entity.getServiceID()).get();
     }
 
     @Override
